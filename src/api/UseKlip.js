@@ -45,6 +45,35 @@ export const listingCard = async (
     callback
   );
 };
+export const burnToken = async (
+  tokenId,
+  setQrvalue,
+  callback
+) => {
+  const functionJson =
+    `{
+      "constant": false,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }`;
+  executeContract(
+    NFT_CONTRACT_ADDRESS,
+    functionJson,
+    "0",
+    `[\"${tokenId}\"]`,
+    setQrvalue,
+    callback
+  );
+};
 
 export const mintCardWithURI = async (
   toAddress,
@@ -54,7 +83,33 @@ export const mintCardWithURI = async (
   callback
 ) => {
   const functionJson =
-    '{ "constant": false, "inputs": [ { "name": "to", "type": "address" }, { "name": "tokenId", "type": "uint256" }, { "name": "tokenURI", "type": "string" } ], "name": "mintWithTokenURI", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }';
+    `{
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "name": "tokenURI",
+          "type": "string"
+        }
+      ],
+      "name": "mintWithTokenURI",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }`;
   executeContract(
     NFT_CONTRACT_ADDRESS,
     functionJson,

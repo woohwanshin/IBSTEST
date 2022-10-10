@@ -19,3 +19,18 @@ body {
   background-color: black;
   color: white;
 }
+
+.galary {
+  display: flex;
+  justify-content: center;
+  gap: 8px !important;
+}
+
+.card {
+  display: flex;
+  background-color: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 44px;
+  font-weight: bold;
+}

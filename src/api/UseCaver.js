@@ -1,6 +1,7 @@
+import axios from "axios";
 import Caver from "caver-js";
 // import CounterABI from '../abi/CounterABI.json';
-import KIP17ABI from "../abi/KIP17TokenABI.json";
+import KIP17ABI from "../abi/IBSTESTABI.json";
 import {
   ACCESS_KEY_ID,
   SECRET_ACCESS_KEY,
@@ -28,6 +29,34 @@ const caver = new Caver(
 );
 const NFTContract = new caver.contract(KIP17ABI, NFT_CONTRACT_ADDRESS);
 
+export const getTotalSupply = async () => {
+  const res = await NFTContract.methods.totalSupply().call();
+  return res;
+}
+
+export const fetchAllTokenList = async (totalSupply) => {
+  const result = [];
+  for(let i = 0; i < totalSupply; i++) {
+    const res = await NFTContract.methods.tokenURI(i+1).call();
+    result.push(res);
+  }
+  console.log(result)
+  const data = [];
+  for(let i = 0; i < result.length; i++) {
+    const res = await axios(`https://ipfs.io/ipfs/${result[i].substring(7)}`)
+    data.push({ uri: `https://ipfs.io/ipfs/${res.data.image.substring(7)}`, id: `${res.data.name}`, tokenId: `${i+1}` });
+    console.log(res.data.image);
+  }
+  
+  console.log(data)
+  return data;
+}
+
+export const burnToken = async (id) => {
+  const res = await NFTContract.methods.burn(id).call();
+  console.log(res);
+}
+
 export const fetchCardsOf = async (address) => {
   // Fetch Balance
   const balance = await NFTContract.methods.balanceOf(address).call();
@@ -44,9 +73,12 @@ export const fetchCardsOf = async (address) => {
     const uri = await NFTContract.methods.tokenURI(tokenIds[i]).call();
     tokenUris.push(uri);
   }
+  console.log(tokenUris);
   const nfts = [];
-  for (let i = 0; i < balance; i++) {
-    nfts.push({ uri: tokenUris[i], id: tokenIds[i] });
+  for (let i = 0; i < tokenUris.length; i++) {
+    const res = await axios(`https://ipfs.io/ipfs/${tokenUris[i].substring(7)}`);
+    console.log(res);
+    nfts.push({ uri: `https://ipfs.io/ipfs/${res.data.image.substring(7)}`, id: `${res.data.name}`, tokenId: `${tokenIds[i]}`});
   }
   console.log(nfts);
   return nfts;
